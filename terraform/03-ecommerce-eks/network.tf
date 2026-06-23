@@ -17,7 +17,7 @@ resource "aws_internet_gateway" "main" {
   tags = { Name = "${local.name}-igw" }
 }
 
-# Public Subnet: ALB + EKS가 ELB를 만들 위치 태그 부여
+# Public Subnet: EKS가 ELB를 만들 위치 태그 부여
 resource "aws_subnet" "public" {
   count = local.az_count
   vpc_id = aws_vpc.main.id
@@ -30,25 +30,15 @@ resource "aws_subnet" "public" {
   }
 }
 
-# Private Subnet: EKS Node Groupo + Internal ELB
-resource "aws_subnet" "app" {
+resource "aws_subnet" "private" {
   count = local.az_count
   vpc_id = aws_vpc.main.id
   cidr_block = cidrsubnet(var.vpc_cidr, 8, count.index + 10)
   availability_zone = var.availability_zones[count.index]
   tags = {
-    Name= "${local.name}-app-${count.index + 1}"
+    Name = "${local.name}-private-${count.index + 1}"
     "kubernetes.io/role/internal-elb" = "1"
   }
-}
-
-# DB Subnet: RDS
-resource "aws_subnet" "data" {
-  count = local.az_count
-  vpc_id = aws_vpc.main.id
-  cidr_block = cidrsubnet(var.vpc_cidr, 8, count.index + 20)
-  availability_zone = var.availability_zones[count.index]
-  tags = { Name = "${local.name}-data-${count.index + 1}" }
 }
 
 resource "aws_eip" "nat" {
@@ -87,14 +77,8 @@ resource "aws_route_table" "private" {
   tags = { Name = "${local.name}-private-rt" }
 }
 
-resource "aws_route_table_association" "app" {
+resource "aws_route_table_association" "private" {
   count = local.az_count
-  subnet_id = aws_subnet.app[count.index].id
-  route_table_id = aws_route_table.private.id
-}
-
-resource "aws_route_table_association" "data" {
-  count = local.az_count
-  subnet_id = aws_subnet.data[count.index].id
+  subnet_id = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private.id
 }
