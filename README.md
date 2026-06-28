@@ -13,6 +13,8 @@
 
 ## Phase 1: 금융 — EKS 기반 고가용성 보안 플랫폼
 
+![아키텍처 다이어그램](/docs/images/finance_eks.jpg)
+
 ### 목표
 금융 도메인의 높은 가용성과 보안 규제 요건을 인프라 코드로 충족합니다. 다중 AZ로 구성한 3계층 VPC 위에 EKS를 올리고, 데이터 계층을 KMS·Secrets Manager로 보호하는 구조를 구현합니다.
 
@@ -34,6 +36,8 @@
 ---
 
 ## Phase 2: 제조 — IoT 센서 실시간 데이터 파이프라인
+
+![아키텍처 다이어그램](/docs/images/deploy_iot.jpg)
 
 ### 목표
 제조 현장의 설비 센서 데이터를 서버리스 아키텍처로 수집·처리·저장·알림하는 파이프라인을 구축합니다. 트래픽에 반응해 자동으로 확장·축소되는 이벤트 기반 구조를 설계합니다.
@@ -70,6 +74,8 @@ aws kinesis put-record --stream-name $stream --partition-key test --data $data
 ---
 
 ## Phase 3: 커머스 — EKS 기반 MSA
+
+![아키텍처 다이어그램](/docs/images/commerce_eks.jpg)
 
 ### 목표
 프로모션·세일 시점의 트래픽 급증에 대응하는 확장 가능한 마이크로서비스 아키텍처를 구축합니다. 정적 자산은 CDN으로 오프로딩하고, 동적 API는 컨테이너로 운영하며 부하에 따라 자동 확장되도록 설계합니다.
